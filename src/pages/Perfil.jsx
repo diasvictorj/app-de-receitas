@@ -1,10 +1,10 @@
 import React from 'react';
 import Header from '../components/Header';
 
-function Comidas() {
+function Perfil() {
   return (
-    <Header name="Comidas" />
+    <Header name="Perfil" hideSearch />
   );
 }
 
-export default Comidas;
+export default Perfil;
