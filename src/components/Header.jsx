@@ -11,19 +11,22 @@ function Header({ name, hideSearch }) {
   return (
     <header>
       <Link to="/perfil">
-      <button type="button" data-testid="profile-top-btn" src={ profileIcon }
-      >
-        <img src={ profileIcon } alt="" />
-      </button>
+        <button
+          type="button"
+          data-testid="profile-top-btn"
+          src={ profileIcon }
+        >
+          <img src={ profileIcon } alt="" />
+        </button>
       </Link>
       <h1 data-testid="page-title">{ name }</h1>
       {
         !hideSearch && (
-          <button 
-            type="button" 
-            data-testid="search-top-btn" 
-            src={ searchIcon } 
-            onClick={ () => setBar(!searchBar)}
+          <button
+            type="button"
+            data-testid="search-top-btn"
+            src={ searchIcon }
+            onClick={ () => setBar(!searchBar) }
           >
             <img src={ searchIcon } alt="" />
           </button>
@@ -32,7 +35,7 @@ function Header({ name, hideSearch }) {
       { searchBar && (
         <label htmlFor='"search-text-input"'>
           Pesquisar
-          <input 
+          <input
             id="search-text-input"
             type="text"
             data-testid="search-input"
