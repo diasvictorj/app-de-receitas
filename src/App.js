@@ -2,13 +2,14 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import Comidas from './pages/Comidas';
 
 function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={ Login } />
-        <Route exact path="/comidas" />
+        <Route exact path="/comidas" component={ Comidas } />
       </Switch>
     </BrowserRouter>
   );
