@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 import requestAPI from '../services/requestAPI';
+import MyContext from '../context/Mycontext';
 
 function Header({ name, hideSearch }) {
   const [searchBar, setBar] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [radioValue, setRadioValue] = useState('');
+  const { setData, API_RESULTS } = useContext(MyContext);
 
   const handleClick = () => {
     if (radioValue === 'first-letter'
@@ -20,7 +23,7 @@ function Header({ name, hideSearch }) {
     console.log(defineURL);
     fetch(defineURL)
       .then((response) => response.json())
-      .then((e) => console.log(e))
+      .then((e) => setData(e))
       .catch((error) => console.log('Deu ruim', error));
   };
 
@@ -105,6 +108,10 @@ function Header({ name, hideSearch }) {
           </button>
         </div>
       )}
+
+      {
+        API_RESULTS.meals.length === 1 ? <Redirect to={ `/${name.toLowerCase()}/${API_RESULTS.meals[0].idMeal}` } /> : null
+      }
     </div>
   );
 }
