@@ -10,7 +10,7 @@ function Header({ name, hideSearch }) {
   const [searchBar, setSearchBar] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [radioValue, setRadioValue] = useState('');
-  const { setMeals, setDrinks } = useContext(MyContext);
+  const { setMeals, setDrinks, setRedirect } = useContext(MyContext);
 
   const handleClick = () => {
     if (radioValue === 'first-letter'
@@ -31,6 +31,7 @@ function Header({ name, hideSearch }) {
         .then((e) => setDrinks(e.drinks))
         .catch((error) => console.log('Deu ruim', error));
     }
+    setRedirect(true);
   };
 
   return (
