@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
+import Provider from './context/Provider';
 import Bebidas from './pages/Bebidas';
 import Comidas from './pages/Comidas';
 import DetalhesBebidas from './pages/DetalhesBebidas';
@@ -20,42 +21,44 @@ import ReceitasFeitas from './pages/ReceitasFeitas';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={ Login } />
-        <Route exact path="/comidas" component={ Comidas } />
-        <Route exact path="/bebidas" component={ Bebidas } />
-        <Route exact path="/comidas/:id-da-receita" component={ DetalhesComidas } />
-        <Route exact path="/bebidas/:id-da-receita" component={ DetalhesBebidas } />
-        <Route
-          exact
-          path="/comidas/:id-da-receita/in-progress"
-          component={ EmProgressoComidas }
-        />
-        <Route
-          exact
-          path="/bebidas/:id-da-receita/in-progress"
-          component={ EmProgressoBebidas }
-        />
-        <Route exact path="/explorar" component={ Explorar } />
-        <Route exact path="/explorar/comidas" component={ ExplorarComidas } />
-        <Route exact path="/explorar/bebidas" component={ ExplorarBebidas } />
-        <Route
-          exact
-          path="/explorar/comidas/ingredientes"
-          component={ ExplorarComidasIngredientes }
-        />
-        <Route
-          exact
-          path="/explorar/bebidas/ingredientes"
-          component={ ExplorarBebidasIngredientes }
-        />
-        <Route exact path="/explorar/comidas/area" component={ ExplorarComidasArea } />
-        <Route exact path="/perfil" component={ Perfil } />
-        <Route exact path="/receitas-feitas" component={ ReceitasFeitas } />
-        <Route exact path="/receitas-favoritas" component={ ReceitasFavoritas } />
-      </Switch>
-    </BrowserRouter>
+    <Provider>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={ Login } />
+          <Route exact path="/comidas" component={ Comidas } />
+          <Route exact path="/bebidas" component={ Bebidas } />
+          <Route exact path="/comidas/:id-da-receita" component={ DetalhesComidas } />
+          <Route exact path="/bebidas/:id-da-receita" component={ DetalhesBebidas } />
+          <Route
+            exact
+            path="/comidas/:id-da-receita/in-progress"
+            component={ EmProgressoComidas }
+          />
+          <Route
+            exact
+            path="/bebidas/:id-da-receita/in-progress"
+            component={ EmProgressoBebidas }
+          />
+          <Route exact path="/explorar" component={ Explorar } />
+          <Route exact path="/explorar/comidas" component={ ExplorarComidas } />
+          <Route exact path="/explorar/bebidas" component={ ExplorarBebidas } />
+          <Route
+            exact
+            path="/explorar/comidas/ingredientes"
+            component={ ExplorarComidasIngredientes }
+          />
+          <Route
+            exact
+            path="/explorar/bebidas/ingredientes"
+            component={ ExplorarBebidasIngredientes }
+          />
+          <Route exact path="/explorar/comidas/area" component={ ExplorarComidasArea } />
+          <Route exact path="/perfil" component={ Perfil } />
+          <Route exact path="/receitas-feitas" component={ ReceitasFeitas } />
+          <Route exact path="/receitas-favoritas" component={ ReceitasFavoritas } />
+        </Switch>
+      </BrowserRouter>
+    </Provider>
   );
 }
 
