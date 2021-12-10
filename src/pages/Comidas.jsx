@@ -34,11 +34,16 @@ function Comidas({ history }) {
 
   const renderCards = () => meals.filter((_, i) => i < doze)
     .map((meal, index) => (
-      <CardReceitaComida meal={ meal } index={ index } key={ meal.idMeal } />
+      <CardReceitaComida
+        meal={ meal }
+        index={ index }
+        key={ meal.idMeal }
+        history={ history }
+      />
     ));
 
   const handleClick = (searchValue) => {
-    const verifyCategory = (searchValue === currentCategory);
+    const verifyCategory = (searchValue === currentCategory || searchValue === 'All');
 
     setRedirect(false);
     if (verifyCategory) {
@@ -75,6 +80,13 @@ function Comidas({ history }) {
             ))
         )
       }
+      <button
+        type="button"
+        data-testid="All-category-filter"
+        onClick={ () => handleClick('All') }
+      >
+        All
+      </button>
       {
         (meals && meals.length === 1 && redirect)
           && <Redirect to={ `/comidas/${meals[0].idMeal}` } />

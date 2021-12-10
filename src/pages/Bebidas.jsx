@@ -18,7 +18,12 @@ function Bebidas({ history }) {
 
   const renderCards = () => drinks.filter((_, i) => i < doze)
     .map((drink, index) => (
-      <CardReceitaBebida drink={ drink } index={ index } key={ drink.idDrink } />
+      <CardReceitaBebida
+        drink={ drink }
+        index={ index }
+        key={ drink.idDrink }
+        history={ history }
+      />
     ));
 
   useEffect(() => {
@@ -38,7 +43,7 @@ function Bebidas({ history }) {
   }, []);
 
   const handleClick = (searchValue) => {
-    const verifyCategory = (searchValue === currentCategory);
+    const verifyCategory = (searchValue === currentCategory || searchValue === 'All');
 
     setRedirect(false);
     if (verifyCategory) {
@@ -75,6 +80,13 @@ function Bebidas({ history }) {
             ))
         )
       }
+      <button
+        type="button"
+        data-testid="All-category-filter"
+        onClick={ () => handleClick('All') }
+      >
+        All
+      </button>
       {
         (drinks && drinks.length === 1 && redirect)
         && <Redirect to={ `/bebidas/${drinks[0].idDrink}` } />
