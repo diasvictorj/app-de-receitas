@@ -1,17 +1,16 @@
-import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
+import MyContext from '../context/Mycontext';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 import requestAPI from '../services/requestAPI';
-import MyContext from '../context/Mycontext';
 
 function Header({ name, hideSearch }) {
-  const [searchBar, setBar] = useState(false);
+  const [searchBar, setSearchBar] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [radioValue, setRadioValue] = useState('');
-  const { setData, API_RESULTS } = useContext(MyContext);
+  const { setMeals, setDrinks } = useContext(MyContext);
 
   const handleClick = () => {
     if (radioValue === 'first-letter'
@@ -20,11 +19,18 @@ function Header({ name, hideSearch }) {
       return null;
     }
     const defineURL = requestAPI(name, searchValue, radioValue);
-    console.log(defineURL);
-    fetch(defineURL)
-      .then((response) => response.json())
-      .then((e) => setData(e))
-      .catch((error) => console.log('Deu ruim', error));
+    if (name === 'Comidas') {
+      fetch(defineURL)
+        .then((response) => response.json())
+        .then((e) => setMeals(e.meals))
+        .catch((error) => console.log('Deu ruim', error));
+    }
+    if (name === 'Bebidas') {
+      fetch(defineURL)
+        .then((response) => response.json())
+        .then((e) => setDrinks(e.drinks))
+        .catch((error) => console.log('Deu ruim', error));
+    }
   };
 
   return (
@@ -47,7 +53,7 @@ function Header({ name, hideSearch }) {
               type="button"
               data-testid="search-top-btn"
               src={ searchIcon }
-              onClick={ () => setBar(!searchBar) }
+              onClick={ () => setSearchBar(!searchBar) }
             >
               <img src={ searchIcon } alt="" />
             </button>
@@ -108,10 +114,6 @@ function Header({ name, hideSearch }) {
           </button>
         </div>
       )}
-
-      {
-        API_RESULTS.meals.length === 1 ? <Redirect to={ `/${name.toLowerCase()}/${API_RESULTS.meals[0].idMeal}` } /> : null
-      }
     </div>
   );
 }

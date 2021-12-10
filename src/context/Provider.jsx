@@ -1,12 +1,15 @@
-import React, { Component } from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import context from './Mycontext';
 
 function Provider({ children }) {
-  const [API_RESULTS, setData] = useState({meals:[]});
+  const [meals, setMeals] = useState([]);
+  const [drinks, setDrinks] = useState([]);
   const contextValue = {
-    API_RESULTS,
-    setData,
+    meals,
+    setMeals,
+    drinks,
+    setDrinks,
   };
   return (
     <context.Provider value={ contextValue }>
@@ -14,5 +17,12 @@ function Provider({ children }) {
     </context.Provider>
   );
 }
+
+Provider.propTypes = {
+  children: PropTypes.objectOf([
+    PropTypes.element,
+    PropTypes.symbol,
+  ]).isRequired,
+};
 
 export default Provider;
