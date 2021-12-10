@@ -10,6 +10,9 @@ const filterCheck = (radioValue, searchValue) => {
   case ('first-letter'):
     return `search.php?f=${searchValue}`;
 
+  case ('category'):
+    return 'list.php?c=list';
+
   default:
     return null;
   }
