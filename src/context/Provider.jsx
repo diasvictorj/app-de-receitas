@@ -5,11 +5,14 @@ import context from './Mycontext';
 function Provider({ children }) {
   const [meals, setMeals] = useState([]);
   const [drinks, setDrinks] = useState([]);
+  const [redirect, setRedirect] = useState(false);
   const contextValue = {
     meals,
     setMeals,
     drinks,
     setDrinks,
+    redirect,
+    setRedirect
   };
   return (
     <context.Provider value={ contextValue }>

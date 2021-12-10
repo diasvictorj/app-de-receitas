@@ -31,12 +31,20 @@ function Bebidas({ history }) {
   }, [setDrinks]);
 
   useEffect(() => {
-    const defineURL = requestAPI('Bebidas', '', 'category');
+    const defineURL = requestAPI('Bebidas', '', 'categories');
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setCategories(e.drinks))
       .catch((error) => console.log('Deu ruim', error));
   }, []);
+
+  const handleClick = (searchValue) => {
+    const defineURL = requestAPI('Bebidas', searchValue, 'category');
+    fetch(defineURL)
+      .then((response) => response.json())
+      .then((e) => setDrinks(e.drinks))
+      .catch((error) => console.log('Deu ruim', error));
+  }
 
   return (
     <div>
@@ -49,7 +57,7 @@ function Bebidas({ history }) {
                 key={ strCategory }
                 type="button"
                 data-testid={ `${strCategory}-category-filter` }
-                onClick={ () => {} }
+                onClick={ () => handleClick(strCategory) }
               >
                 {strCategory}
               </button>

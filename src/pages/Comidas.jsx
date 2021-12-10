@@ -9,7 +9,7 @@ import CardReceitaComida from '../components/CardReceitaComida';
 import requestAPI from '../services/requestAPI';
 
 function Comidas({ history }) {
-  const { meals, setMeals } = useContext(MyContext);
+  const { meals, setMeals, redirect, setRedirect } = useContext(MyContext);
   const [categories, setCategories] = useState([]);
   const message = ('Sinto muito, não encontramos nenhuma receita para esses filtros.');
   const doze = 12;
@@ -24,7 +24,7 @@ function Comidas({ history }) {
   }, [setMeals]);
 
   useEffect(() => {
-    const defineURL = requestAPI('Comidas', '', 'category');
+    const defineURL = requestAPI('Comidas', '', 'categories');
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setCategories(e.meals))
@@ -36,6 +36,15 @@ function Comidas({ history }) {
       <CardReceitaComida meal={ meal } index={ index } key={ meal.idMeal } />
     ));
 
+  const handleClick = (searchValue) => {
+    setRedirect(false);
+    const defineURL = requestAPI('Comidas', searchValue, 'category');
+    fetch(defineURL)
+      .then((response) => response.json())
+      .then((e) => setMeals(e.meals))
+      .catch((error) => console.log('Deu ruim', error));
+  }
+  
   return (
     <div>
       <Header name="Comidas" />
@@ -47,7 +56,7 @@ function Comidas({ history }) {
                 key={ strCategory }
                 type="button"
                 data-testid={ `${strCategory}-category-filter` }
-                onClick={ () => {} }
+                onClick={ () => handleClick(strCategory) }
               >
                 {strCategory}
               </button>
@@ -55,7 +64,7 @@ function Comidas({ history }) {
         )
       }
       {
-        (meals && meals.length === 1) && <Redirect to={ `/comidas/${meals[0].idMeal}` } />
+        (meals && meals.length === 1 && redirect) && <Redirect to={ `/comidas/${meals[0].idMeal}` } />
       }
       {
         meals ? renderCards() : global.alert(message)

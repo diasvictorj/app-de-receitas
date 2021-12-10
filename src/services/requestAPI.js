@@ -3,6 +3,9 @@ const filterCheck = (radioValue, searchValue) => {
   switch (radioValue) {
   case ('ingredient'):
     return `filter.php?i=${searchValue}`;
+    
+  case('category'):
+    return `filter.php?c=${searchValue}`;
 
   case ('name'):
     return `search.php?s=${searchValue}`;
@@ -10,8 +13,8 @@ const filterCheck = (radioValue, searchValue) => {
   case ('first-letter'):
     return `search.php?f=${searchValue}`;
 
-  case ('category'):
-    return 'list.php?c=list';
+  case ('categories'):
+    return `list.php?c=list`;
 
   default:
     return null;
