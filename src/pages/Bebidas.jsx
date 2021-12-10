@@ -3,15 +3,14 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import MenuInferior from '../components/MenuInferior';
-
 import MyContext from '../context/Mycontext';
 import CardReceitaBebida from '../components/CardReceitaBebida';
-
 import requestAPI from '../services/requestAPI';
 
 function Bebidas({ history }) {
-  const { drinks, setDrinks } = useContext(MyContext);
+  const { drinks, setDrinks, redirect, setRedirect } = useContext(MyContext);
   const [categories, setCategories] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState(undefined);
 
   const message = 'Sinto muito, não encontramos nenhuma receita para esses filtros.';
   const doze = 12;
@@ -39,12 +38,24 @@ function Bebidas({ history }) {
   }, []);
 
   const handleClick = (searchValue) => {
-    const defineURL = requestAPI('Bebidas', searchValue, 'category');
+    const verifyCategory = (searchValue === currentCategory);
+
+    setRedirect(false);
+    if (verifyCategory) {
+      setCurrentCategory('');
+    } else {
+      setCurrentCategory(searchValue);
+    }
+
+    const defineURL = verifyCategory
+      ? requestAPI('Bebidas', '', 'name')
+      : requestAPI('Bebidas', searchValue, 'category');
+
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setDrinks(e.drinks))
       .catch((error) => console.log('Deu ruim', error));
-  }
+  };
 
   return (
     <div>
@@ -65,7 +76,7 @@ function Bebidas({ history }) {
         )
       }
       {
-        (drinks && drinks.length === 1)
+        (drinks && drinks.length === 1 && redirect)
         && <Redirect to={ `/bebidas/${drinks[0].idDrink}` } />
       }
       {

@@ -12,7 +12,7 @@ function Provider({ children }) {
     drinks,
     setDrinks,
     redirect,
-    setRedirect
+    setRedirect,
   };
   return (
     <context.Provider value={ contextValue }>

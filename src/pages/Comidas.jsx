@@ -11,6 +11,7 @@ import requestAPI from '../services/requestAPI';
 function Comidas({ history }) {
   const { meals, setMeals, redirect, setRedirect } = useContext(MyContext);
   const [categories, setCategories] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState(undefined);
   const message = ('Sinto muito, não encontramos nenhuma receita para esses filtros.');
   const doze = 12;
   const maxCategoriesLength = 5;
@@ -37,14 +38,25 @@ function Comidas({ history }) {
     ));
 
   const handleClick = (searchValue) => {
+    const verifyCategory = (searchValue === currentCategory);
+
     setRedirect(false);
-    const defineURL = requestAPI('Comidas', searchValue, 'category');
+    if (verifyCategory) {
+      setCurrentCategory('');
+    } else {
+      setCurrentCategory(searchValue);
+    }
+
+    const defineURL = verifyCategory
+      ? requestAPI('Comidas', '', 'name')
+      : requestAPI('Comidas', searchValue, 'category');
+
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setMeals(e.meals))
       .catch((error) => console.log('Deu ruim', error));
-  }
-  
+  };
+
   return (
     <div>
       <Header name="Comidas" />
@@ -64,7 +76,8 @@ function Comidas({ history }) {
         )
       }
       {
-        (meals && meals.length === 1 && redirect) && <Redirect to={ `/comidas/${meals[0].idMeal}` } />
+        (meals && meals.length === 1 && redirect)
+          && <Redirect to={ `/comidas/${meals[0].idMeal}` } />
       }
       {
         meals ? renderCards() : global.alert(message)
