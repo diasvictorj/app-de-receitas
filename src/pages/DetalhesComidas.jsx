@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
 import { getMealDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardDrink';
+import 'swiper/swiper.min.css';
 
 function DetalhesComidas() {
   const params = useParams();
@@ -36,8 +38,9 @@ function DetalhesComidas() {
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => {
-        const recommendedDrinks = e.drinks.slice(0, 6);
-        setRecomendations(recommendedDrinks)
+        const maxIndex = 6;
+        const recommendedDrinks = e.drinks.slice(0, maxIndex);
+        setRecomendations(recommendedDrinks);
       })
       .catch((error) => console.log('Deu ruim', error));
 
@@ -72,9 +75,18 @@ function DetalhesComidas() {
       <ReactPlayer data-testid="video" controls url={ recipe[0].strYoutube } />
       {
         recomendations && (
-          recomendations.map((recomendation, indice) => (
-            <RecomendationCard indice={ indice } key={ Math.random() } recomendation={ recomendation } />
-          ))
+          <Swiper spaceBetween={ 50 } slidesPerView={ 2 } direction="horizontal">
+            {
+              recomendations.map((recomendation, indice) => (
+                <SwiperSlide key={ Math.random() }>
+                  <RecomendationCard
+                    index={ indice }
+                    recomendation={ recomendation }
+                  />
+                </SwiperSlide>
+              ))
+            }
+          </Swiper>
         )
       }
       <button data-testid="start-recipe-btn" type="button">Iniciar</button>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
 import { getCocktailsDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardMeal';
+import 'swiper/swiper.min.css';
 
 function DetalhesBebidas() {
   const params = useParams();
@@ -35,7 +37,8 @@ function DetalhesBebidas() {
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => {
-        const recommendedMeals = e.meals.slice(0,6)
+        const maxIndex = 6;
+        const recommendedMeals = e.meals.slice(0, maxIndex);
         setRecomendations(recommendedMeals);
       })
       .catch((error) => console.log('Deu ruim', error));
@@ -70,13 +73,18 @@ function DetalhesBebidas() {
       <p data-testid="instructions">{ recipe[0].strInstructions }</p>
       {
         recomendations && (
-          recomendations.map((recomendation, indice) => (
-            <RecomendationCard
-              indice={ indice }
-              key={ Math.random() }
-              recomendation={ recomendation }
-            />
-          ))
+          <Swiper spaceBetween={ 50 } slidesPerView={ 2 } direction="horizontal">
+            {
+              recomendations.map((recomendation, indice) => (
+                <SwiperSlide key={ Math.random() }>
+                  <RecomendationCard
+                    index={ indice }
+                    recomendation={ recomendation }
+                  />
+                </SwiperSlide>
+              ))
+            }
+          </Swiper>
         )
       }
       <button data-testid="start-recipe-btn" type="button">Iniciar</button>
