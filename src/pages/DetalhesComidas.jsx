@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
@@ -10,7 +10,8 @@ import 'swiper/swiper.min.css';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function DetalhesComidas({ history }) {
+function DetalhesComidas() {
+  const history = useHistory();
   const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
@@ -19,7 +20,11 @@ function DetalhesComidas({ history }) {
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
-  
+  const [isFav, setFav] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
+
+
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
       const recipeKeys = Object.keys(data.meals[0]);
@@ -35,7 +40,7 @@ function DetalhesComidas({ history }) {
       setMeasures(recipeMeasures);
       setRecipe(data.meals);
     });
-  }, []);
+  }, [idReceita]);
 
   useEffect(() => {
     const defineURL = requestAPI('Bebidas', '', 'name');
@@ -54,17 +59,30 @@ function DetalhesComidas({ history }) {
     };
   }, []);
 
+  useEffect(() => {
+    const getStoragedDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    const getStoragedinProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+
+    if(getStoragedinProgressRecipes) {
+      setInProgress((getStoragedinProgressRecipes.meals[idReceita]));
+    };
+
+    if (getStoragedDoneRecipes) {
+      setIsDone(getStoragedDoneRecipes.some((r) => r.id === idReceita));
+    };
+  }, [idReceita]);
+
   const renderRecipe = () => (
-    <div>
+    <div style={ { position: 'relative' } }>
       <img alt="recipies" src={ recipe[0].strMealThumb } data-testid="recipe-photo" />
       <h2 data-testid="recipe-title">{ recipe[0].strMeal }</h2>
       <button
-      type="button"
-      data-testid="share-btn"
-      onClick={ () => {
-        setLinkCopied(true);
-        navigator.clipboard.writeText(`http://localhost:3000${pathname}`);
-      } }
+        type="button"
+        data-testid="share-btn"
+        onClick={ () => {
+          setLinkCopied(true);
+          navigator.clipboard.writeText(`http://localhost:3000${pathname}`);
+        } }
       >
         Compartilhar
       </button>
@@ -75,7 +93,7 @@ function DetalhesComidas({ history }) {
       >
         <img
           src={ isFav ? blackHeartIcon : whiteHeartIcon }
-          alt={`${isFav ? 'black' : 'white'} heart icon`}
+          alt={ `${isFav ? 'black' : 'white'} heart icon` }
         />
         Favoritar
       </button>
@@ -113,13 +131,18 @@ function DetalhesComidas({ history }) {
           </Swiper>
         )
       }
-      <button
-        data-testid="start-recipe-btn"
-        type="button"
-        onClick={ () => history.push(`/comidas/${id_da_receita}/in-progress`) }
-      >
-        Iniciar Receita
-      </button>
+      {
+        !isDone && (
+          <button
+            data-testid="start-recipe-btn"
+            type="button"
+            onClick={ () => history.push(`/comidas/${idReceita}/in-progress`) }
+            style={ { position: 'fixed', bottom: '0' } }
+          >
+            { inProgress ? 'Continuar' : 'Iniciar'} Receita
+          </button>
+        )
+      }
       {
         linkCopied && <p>Link copiado!</p>
       }
@@ -130,6 +153,6 @@ function DetalhesComidas({ history }) {
       <Header name="Detalhes Comidas" />
       { recipe && renderRecipe() }
     </div>
-  )
+  );
 }
 export default DetalhesComidas;

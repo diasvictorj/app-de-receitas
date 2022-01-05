@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
 import { getCocktailsDetails } from '../services/requestDetails';
@@ -9,7 +9,8 @@ import 'swiper/swiper.min.css';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function DetalhesBebidas({ history }) {
+function DetalhesBebidas() {
+  const history = useHistory();
   const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
@@ -18,6 +19,9 @@ function DetalhesBebidas({ history }) {
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isFav, setFav] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
@@ -34,7 +38,7 @@ function DetalhesBebidas({ history }) {
       setMeasures(recipeMeasures);
       setRecipe(data.drinks);
     });
-  }, []);
+  }, [idReceita]);
 
   useEffect(() => {
     const defineURL = requestAPI('Comidas', '', 'name');
@@ -53,8 +57,20 @@ function DetalhesBebidas({ history }) {
     };
   }, []);
 
+  useEffect(() => {
+    const getStoragedDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    const getStoragedinProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+
+    if(getStoragedinProgressRecipes) {
+      setInProgress((getStoragedinProgressRecipes.cocktails[idReceita]));
+    };
+    if (getStoragedDoneRecipes) {
+      setIsDone(getStoragedDoneRecipes.some((r) => r.id === idReceita));
+    };
+  }, [idReceita]);
+
   const renderRecipe = () => (
-    <div>
+    <div style={ { position: 'relative' } }>
       <img alt="recipies" src={ recipe[0].strDrinkThumb } data-testid="recipe-photo" />
       <h2 data-testid="recipe-title">{ recipe[0].strDrink }</h2>
       <button
@@ -63,7 +79,7 @@ function DetalhesBebidas({ history }) {
         onClick={ () => {
           setLinkCopied(true);
           navigator.clipboard.writeText(`http://localhost:3000${pathname}`);
-      } }
+        } }
       >
         Compartilhar
       </button>
@@ -74,7 +90,7 @@ function DetalhesBebidas({ history }) {
       >
         <img
           src={ isFav ? blackHeartIcon : whiteHeartIcon }
-          alt={`${isFav ? 'black' : 'white'} heart icon`}
+          alt={ `${isFav ? 'black' : 'white'} heart icon` }
         />
         Favoritar
       </button>
@@ -111,13 +127,18 @@ function DetalhesBebidas({ history }) {
           </Swiper>
         )
       }
-      <button
-        data-testid="start-recipe-btn"
-        type="button"
-        onClick={ () => history.push(`/bebidas/${id_da_receita}/in-progress`) }
-      >
-        Iniciar Receita
-      </button>
+      {
+        !isDone && (
+          <button
+            data-testid="start-recipe-btn"
+            type="button"
+            onClick={ () => history.push(`/bebidas/${idReceita}/in-progress`) }
+            style={ { position: 'fixed', bottom: '0' } }
+          >
+            { inProgress ? 'Continuar' : 'Iniciar'} Receita
+          </button>
+        )
+      }
       {
         linkCopied && <p>Link copiado!</p>
       }
@@ -128,7 +149,7 @@ function DetalhesBebidas({ history }) {
       <Header name="Detalhes Bebidas" />
       { recipe && renderRecipe() }
     </div>
-  )
+  );
 }
 
 export default DetalhesBebidas;
