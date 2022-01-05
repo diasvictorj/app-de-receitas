@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import MyContext from '../context/Mycontext';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
@@ -10,10 +11,15 @@ import 'swiper/swiper.min.css';
 function DetalhesBebidas() {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
+
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
+
+  const { setInProgress } = useContext(MyContext);
+
+
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
       const recipeKeys = Object.keys(data.drinks[0]);
@@ -28,6 +34,7 @@ function DetalhesBebidas() {
       setIngredients(recipeIngredients);
       setMeasures(recipeMeasures);
       setRecipe(data.drinks);
+      
     });
   }, []);
 
@@ -47,6 +54,15 @@ function DetalhesBebidas() {
 
     };
   }, []);
+
+  const handleClick = () => {
+    const inProgressRecipe = {
+      recipe,
+      ingredients,
+    }
+    console.log(inProgressRecipe);
+  setInProgress(inProgressRecipe);
+  }
 
   const renderRecipe = () => (
     <div>
@@ -87,9 +103,16 @@ function DetalhesBebidas() {
           </Swiper>
         )
       }
-      <button data-testid="start-recipe-btn" type="button">Iniciar</button>
+      <button 
+      data-testid="start-recipe-btn" 
+      type="button"
+      onClick={() => handleClick()}
+      >
+        Iniciar
+      </button>
     </div>
   );
+  
   return (
     <div>
       <Header name="Detalhes Bebidas" />

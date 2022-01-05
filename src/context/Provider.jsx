@@ -6,6 +6,7 @@ function Provider({ children }) {
   const [meals, setMeals] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [inProgess, setInProgress] = useState([]);
   const contextValue = {
     meals,
     setMeals,
@@ -13,6 +14,8 @@ function Provider({ children }) {
     setDrinks,
     redirect,
     setRedirect,
+    inProgess,
+    setInProgress,
   };
   return (
     <context.Provider value={ contextValue }>
