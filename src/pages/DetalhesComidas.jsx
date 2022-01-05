@@ -7,14 +7,19 @@ import { getMealDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardDrink';
 import 'swiper/swiper.min.css';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function DetalhesComidas() {
+function DetalhesComidas({ history }) {
+  const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
+  const [linkCopied, setLinkCopied] = useState(false);
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
+  
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
       const recipeKeys = Object.keys(data.meals[0]);
@@ -53,8 +58,27 @@ function DetalhesComidas() {
     <div>
       <img alt="recipies" src={ recipe[0].strMealThumb } data-testid="recipe-photo" />
       <h2 data-testid="recipe-title">{ recipe[0].strMeal }</h2>
-      <button type="button" data-testid="share-btn">Compartilhar</button>
-      <button type="button" data-testid="favorite-btn">Favoritar</button>
+      <button
+      type="button"
+      data-testid="share-btn"
+      onClick={ () => {
+        setLinkCopied(true);
+        navigator.clipboard.writeText(`http://localhost:3000${pathname}`);
+      } }
+      >
+        Compartilhar
+      </button>
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        src={ isFav ? blackHeartIcon : whiteHeartIcon }
+      >
+        <img
+          src={ isFav ? blackHeartIcon : whiteHeartIcon }
+          alt={`${isFav ? 'black' : 'white'} heart icon`}
+        />
+        Favoritar
+      </button>
       <span data-testid="recipe-category">{ recipe[0].strCategory }</span>
       <ul>
         {
@@ -89,7 +113,16 @@ function DetalhesComidas() {
           </Swiper>
         )
       }
-      <button data-testid="start-recipe-btn" type="button">Iniciar</button>
+      <button
+        data-testid="start-recipe-btn"
+        type="button"
+        onClick={ () => history.push(`/comidas/${id_da_receita}/in-progress`) }
+      >
+        Iniciar Receita
+      </button>
+      {
+        linkCopied && <p>Link copiado!</p>
+      }
     </div>
   );
   return (
@@ -97,7 +130,6 @@ function DetalhesComidas() {
       <Header name="Detalhes Comidas" />
       { recipe && renderRecipe() }
     </div>
-  );
+  )
 }
-
 export default DetalhesComidas;
