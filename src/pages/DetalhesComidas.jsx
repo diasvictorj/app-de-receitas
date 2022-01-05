@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -7,14 +8,17 @@ import { getMealDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardDrink';
 import 'swiper/swiper.min.css';
+import MyContext from '../context/Mycontext';
 
-function DetalhesComidas() {
+function DetalhesComidas({ history }) {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
+
+  const { setInProgress } = useContext(MyContext);
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
       const recipeKeys = Object.keys(data.meals[0]);
@@ -48,6 +52,15 @@ function DetalhesComidas() {
 
     };
   }, []);
+
+  const handleClick = () => {
+    const inProgressRecipe = {
+      recipe,
+      ingredients,
+    };
+    setInProgress(inProgressRecipe);
+    history.push(`/comidas/${idReceita}/in-progress`);
+  };
 
   const renderRecipe = () => (
     <div>
@@ -89,7 +102,13 @@ function DetalhesComidas() {
           </Swiper>
         )
       }
-      <button data-testid="start-recipe-btn" type="button">Iniciar</button>
+      <button
+        data-testid="start-recipe-btn"
+        type="button"
+        onClick={ () => handleClick() }
+      >
+        Iniciar
+      </button>
     </div>
   );
   return (
@@ -99,5 +118,9 @@ function DetalhesComidas() {
     </div>
   );
 }
+
+DetalhesComidas.propTypes = {
+  history: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 export default DetalhesComidas;

@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
-import MyContext from '../context/Mycontext';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import MyContext from '../context/Mycontext';
 import Header from '../components/Header';
 import { getCocktailsDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardMeal';
 import 'swiper/swiper.min.css';
 
-function DetalhesBebidas() {
+function DetalhesBebidas({ history }) {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
 
@@ -18,7 +19,6 @@ function DetalhesBebidas() {
   const [recomendations, setRecomendations] = useState([]);
 
   const { setInProgress } = useContext(MyContext);
-
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
@@ -34,7 +34,6 @@ function DetalhesBebidas() {
       setIngredients(recipeIngredients);
       setMeasures(recipeMeasures);
       setRecipe(data.drinks);
-      
     });
   }, []);
 
@@ -59,10 +58,10 @@ function DetalhesBebidas() {
     const inProgressRecipe = {
       recipe,
       ingredients,
-    }
-    console.log(inProgressRecipe);
-  setInProgress(inProgressRecipe);
-  }
+    };
+    setInProgress(inProgressRecipe);
+    history.push(`/bebidas/${idReceita}/in-progress`);
+  };
 
   const renderRecipe = () => (
     <div>
@@ -103,16 +102,16 @@ function DetalhesBebidas() {
           </Swiper>
         )
       }
-      <button 
-      data-testid="start-recipe-btn" 
-      type="button"
-      onClick={() => handleClick()}
+      <button
+        data-testid="start-recipe-btn"
+        type="button"
+        onClick={ () => handleClick() }
       >
         Iniciar
       </button>
     </div>
   );
-  
+
   return (
     <div>
       <Header name="Detalhes Bebidas" />
@@ -120,5 +119,9 @@ function DetalhesBebidas() {
     </div>
   );
 }
+
+DetalhesBebidas.propTypes = {
+  history: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 export default DetalhesBebidas;
