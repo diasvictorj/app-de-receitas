@@ -1,9 +1,31 @@
-import React, { useContext } from 'react';
-import MyContext from '../context/Mycontext';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { getCocktailsDetails } from '../services/requestDetails';
+
 
 function EmProgressoBebidas() {
-  const { inProgess } = useContext(MyContext);
-  const { recipe, ingredients } = inProgess;
+  const params = useParams();
+  const { id_da_receita: idReceita } = params;
+  const [recipe, setRecipe] = useState('');
+  const [ingredients, setIngredients] = useState([]);
+
+  useEffect(() => {
+    getCocktailsDetails(idReceita).then((data) => {
+      const recipeKeys = Object.keys(data.drinks[0]);
+      const recipeIngredients = recipeKeys
+        .filter((key) => key.includes('strIngredient') && data.drinks[0][key])
+        .map((i) => data.drinks[0][i]);
+
+
+      setIngredients(recipeIngredients);
+  
+      setRecipe(data.drinks);
+    });
+  }, []);
+
+  if (!recipe) {
+    return (<h1>Loading</h1>); /* Fazer componente Loading */
+  }
   const {
     strDrink,
     strCategory,

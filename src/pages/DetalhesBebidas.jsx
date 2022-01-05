@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import MyContext from '../context/Mycontext';
 import Header from '../components/Header';
 import { getCocktailsDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
@@ -17,8 +16,6 @@ function DetalhesBebidas({ history }) {
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
-
-  const { setInProgress } = useContext(MyContext);
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {

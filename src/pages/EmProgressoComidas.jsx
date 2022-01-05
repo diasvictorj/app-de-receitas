@@ -20,8 +20,9 @@ function EmProgressoComidas() {
     });
   }, []);
 
-  console.log(recipe[0]);
-
+  if (!recipe) {
+    return (<h1>Loading</h1>); /* Fazer componente Loading */
+  }
   const {
     strMeal,
     strCategory,
