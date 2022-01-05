@@ -25,6 +25,7 @@ function requestAPI(name, searchValue, radioValue) {
   // Verificação do Titulo da Pagina
   if (name === 'Comidas') {
     const URLComidas = `https://www.themealdb.com/api/json/v1/1/${filterCheck(radioValue, searchValue)}`;
+    console.log(URLComidas);
     return URLComidas;
   } if (name === 'Bebidas') {
     const URLBebidas = `https://www.thecocktaildb.com/api/json/v1/1/${filterCheck(radioValue, searchValue)}`;

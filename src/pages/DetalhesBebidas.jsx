@@ -34,7 +34,10 @@ function DetalhesBebidas() {
 
     fetch(defineURL)
       .then((response) => response.json())
-      .then((e) => setRecomendations(e.meals.splice(0, 6)))
+      .then((e) => {
+        const recommendedMeals = e.meals.slice(0,6)
+        setRecomendations(recommendedMeals);
+      })
       .catch((error) => console.log('Deu ruim', error));
 
     return () => {
