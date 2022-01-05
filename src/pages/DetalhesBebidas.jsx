@@ -59,15 +59,48 @@ function DetalhesBebidas() {
 
   useEffect(() => {
     const getStoragedDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-    const getStoragedinProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const getStoragedinProgressRecipes = JSON
+      .parse(localStorage.getItem('inProgressRecipes'));
 
-    if(getStoragedinProgressRecipes) {
+    const getStoragedFavRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+
+    if (getStoragedFavRecipes) {
+      setFav(getStoragedFavRecipes.some((r) => r.id === idReceita));
+    }
+
+    if (getStoragedinProgressRecipes) {
       setInProgress((getStoragedinProgressRecipes.cocktails[idReceita]));
-    };
+    }
     if (getStoragedDoneRecipes) {
       setIsDone(getStoragedDoneRecipes.some((r) => r.id === idReceita));
-    };
+    }
   }, [idReceita]);
+
+  const handleFavButtonClick = () => {
+    const {
+      idDrink: id,
+      strAlcoholic: alcoholicOrNot,
+      strCategory: category,
+      strDrink,
+      strDrinkThumb: image,
+    } = recipe[0];
+
+    const recipeToStorage = {
+      id,
+      type: 'bebida',
+      area: '',
+      category,
+      alcoholicOrNot,
+      name: strDrink,
+      image,
+    };
+
+    setFav((p) => !p);
+
+    const getFav = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    const handleFav = getFav ? [...getFav, recipeToStorage] : [recipeToStorage];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(handleFav));
+  };
 
   const renderRecipe = () => (
     <div style={ { position: 'relative' } }>
@@ -87,6 +120,7 @@ function DetalhesBebidas() {
         type="button"
         data-testid="favorite-btn"
         src={ isFav ? blackHeartIcon : whiteHeartIcon }
+        onClick={ handleFavButtonClick }
       >
         <img
           src={ isFav ? blackHeartIcon : whiteHeartIcon }
@@ -135,7 +169,9 @@ function DetalhesBebidas() {
             onClick={ () => history.push(`/bebidas/${idReceita}/in-progress`) }
             style={ { position: 'fixed', bottom: '0' } }
           >
-            { inProgress ? 'Continuar' : 'Iniciar'} Receita
+            { inProgress ? 'Continuar' : 'Iniciar'}
+            {' '}
+            Receita
           </button>
         )
       }
