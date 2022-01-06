@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import Header from '../components/Header';
-import { getCocktailsDetails } from '../services/requestDetails';
-import requestAPI from '../services/requestAPI';
-import RecomendationCard from '../components/RecomendationCardMeal';
 import 'swiper/swiper.min.css';
+import RecomendationCard from '../components/RecomendationCardMeal';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import requestAPI from '../services/requestAPI';
+import { getCocktailsDetails } from '../services/requestDetails';
 
 function DetalhesBebidas() {
   const history = useHistory();
@@ -184,7 +183,6 @@ function DetalhesBebidas() {
 
   return (
     <div>
-      <Header name="Detalhes Bebidas" />
       { recipe && renderRecipe() }
     </div>
   );

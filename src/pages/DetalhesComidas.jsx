@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import { useHistory, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import Header from '../components/Header';
-import { getMealDetails } from '../services/requestDetails';
-import requestAPI from '../services/requestAPI';
-import RecomendationCard from '../components/RecomendationCardDrink';
 import 'swiper/swiper.min.css';
+import RecomendationCard from '../components/RecomendationCardDrink';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
+import requestAPI from '../services/requestAPI';
+import { getMealDetails } from '../services/requestDetails';
 
 function DetalhesComidas() {
   const history = useHistory();
   const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
-  const [linkCopied, setLinkCopied] = useState(false);
   const [recipe, setRecipe] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
@@ -184,7 +183,6 @@ function DetalhesComidas() {
   );
   return (
     <div>
-      <Header name="Detalhes Comidas" />
       { recipe && renderRecipe() }
     </div>
   );

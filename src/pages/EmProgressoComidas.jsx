@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getMealDetails } from '../services/requestDetails';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import Favoritar from '../components/Favoritar';
+import IngredientsList from '../components/IngredientsList';
 import '../css/EmProgresso.css';
+import { getMealDetails } from '../services/requestDetails';
 
 function EmProgressoComidas() {
+  const history = useHistory();
   const params = useParams();
   const { id_da_receita: idReceita } = params;
   const getProgressInitial = JSON.parse(localStorage.getItem('inProgressRecipes'));
@@ -12,6 +15,9 @@ function EmProgressoComidas() {
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [checkedIngredients, setChecked] = useState(initialIngredients);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [isFav, setFav] = useState(false);
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
@@ -36,7 +42,41 @@ function EmProgressoComidas() {
     }
   }, [checkedIngredients, idReceita]);
 
-  const handleClick = ({ target }) => {
+  useEffect(() => {
+    const getStoragedFavRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+
+    if (getStoragedFavRecipes) {
+      setFav(getStoragedFavRecipes.some((r) => r.id === idReceita));
+    }
+  }, []);
+
+  const handleFavButtonClick = () => {
+    const {
+      idMeal: id,
+      strCategory: category,
+      strArea: area,
+      strMeal,
+      strMealThumb: image,
+    } = recipe[0];
+
+    const recipeToStorage = {
+      id,
+      type: 'comida',
+      area,
+      category,
+      alcoholicOrNot: '',
+      name: strMeal,
+      image,
+    };
+
+    setFav((p) => !p);
+
+    const getFav = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    const handleFav = getFav ? [...getFav, recipeToStorage] : [recipeToStorage];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(handleFav));
+  };
+
+  const handleChange = ({ target }) => {
     const { value, checked } = target;
     if (checked) {
       setChecked((p) => [...p, value]);
@@ -44,6 +84,10 @@ function EmProgressoComidas() {
       setChecked(checkedIngredients.filter((item) => item !== value));
     }
   };
+
+  useEffect(() => {
+    setDisabled(checkedIngredients.length !== ingredients.length);
+  }, [checkedIngredients]);
 
   if (!recipe) {
     return (<h1>Loading</h1>); /* Fazer componente Loading */
@@ -67,45 +111,38 @@ function EmProgressoComidas() {
           src={ strMealThumb }
           alt="Foto não encontrada"
         />
-        <button data-testid="favorite-btn" type="button">
-          Favoritar
-        </button>
-        <button data-testid="share-btn" type="button">
+        <Favoritar handleFavButtonClick={ handleFavButtonClick } isFav={ isFav } />
+        <button
+          data-testid="share-btn"
+          type="button"
+          onClick={ () => {
+            setLinkCopied(true);
+            navigator.clipboard.writeText(`http://localhost:3000/comidas/${idReceita}`);
+          } }
+        >
           Compartilhar
         </button>
       </section>
       <section>
-        <div id="ingredient-list">
-          {
-            ingredients.map((item, i) => (
-              <label
-                htmlFor={ `ingredient-${item}` }
-                key={ item }
-                data-testid={ `${i}-ingredient-step` }
-              >
-                <input
-                  id={ `ingredient-${item}` }
-                  value={ item }
-                  type="checkbox"
-                  checked={ checkedIngredients
-                    .some((checkedItem) => checkedItem === item) }
-                  onChange={ (event) => handleClick(event) }
-                />
-                <span
-                  className={ checkedIngredients
-                    .some((checkedItem) => checkedItem === item) ? 'checked' : '' }
-                >
-                  { item }
-                </span>
-              </label>))
-          }
-        </div>
+        <IngredientsList
+          ingredients={ ingredients }
+          checkedIngredients={ checkedIngredients }
+          handleChange={ handleChange }
+        />
         <div>
           <p data-testid="instructions">{ strInstructions }</p>
         </div>
-        <button data-testid="finish-recipe-btn" type="button">
+        <button
+          data-testid="finish-recipe-btn"
+          type="button"
+          onClick={ () => history.push('/receitas-feitas') }
+          disabled={ disabled }
+        >
           Finalizar Receita
         </button>
+        {
+          linkCopied && <p>Link copiado!</p>
+        }
       </section>
     </div>
   );
