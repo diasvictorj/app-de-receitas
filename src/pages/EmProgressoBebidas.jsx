@@ -6,9 +6,11 @@ import '../css/EmProgresso.css';
 function EmProgressoBebidas() {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
+  const getProgressInitial = JSON.parse(localStorage.getItem('inProgessRecipes'));
+  const initialIngredients = getProgressInitial ? getProgressInitial.cocktails[idReceita] : [];
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
-  const [isChecked, setChecked] = useState('');
+  const [checkedIngredients, setChecked] = useState(initialIngredients);
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
@@ -20,13 +22,24 @@ function EmProgressoBebidas() {
       setIngredients(recipeIngredients);
       setRecipe(data.drinks);
     });
-  }, []);
+  }, [idReceita]);
 
-  const handleClick = () => {
-    if (isChecked !== '') {
-      setChecked('checked');
+  useEffect(() => {
+    const getProgress = JSON.parse(localStorage.getItem('inProgessRecipes'));
+    if (getProgress) {
+      getProgress.cocktails[idReceita] = checkedIngredients;
+      localStorage.setItem('inProgressRecipes', JSON.stringify(getProgress));
     } else {
-      setChecked('');
+      localStorage.setItem('inProgressRecipes', JSON.stringify({ cocktails:{ [idReceita]: checkedIngredients }, meals: {} }));
+    }
+  }, [checkedIngredients, idReceita]);
+
+  const handleClick = ({ target }) => {
+    const { value, checked } = target;
+    if (checked) {
+      setChecked((p) => [...p, value]);
+    } else {
+      setChecked(checkedIngredients.filter((item) => item !== value));
     }
   };
 
@@ -67,11 +80,20 @@ function EmProgressoBebidas() {
             ingredients.map((item, i) => (
               <label
                 htmlFor="ingredients"
-                data-testeid={ `${i}-ingerdient-step` }
+                data-testid={ `${i}-ingredient-step` }
                 key={ item }
+                className={ checkedIngredients
+                  .some((checkedItem) => checkedItem === item) ? 'checked' : '' }
               >
-                <input type="checkbox" onClick={ handleClick } />
-                <p className={ isChecked }>{ item }</p>
+                <input
+                  id="ingrediends"
+                  value={ item }
+                  checked={ checkedIngredients
+                    .some((checkedItem) => checkedItem === item) }
+                  type="checkbox"
+                  onClick={ (event) => handleClick(event) }
+                />
+                { item }
               </label>))
           }
         </div>

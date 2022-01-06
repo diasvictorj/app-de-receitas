@@ -8,7 +8,7 @@ function EmProgressoComidas() {
   const { id_da_receita: idReceita } = params;
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
-  const [isChecked, setChecked] = useState('');
+  const [checkedIngredients, setChecked] = useState([]);
 
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
@@ -20,13 +20,14 @@ function EmProgressoComidas() {
       setIngredients(recipeIngredients);
       setRecipe(data.meals);
     });
-  }, []);
+  }, [idReceita]);
 
-  const handleClick = () => {
-    if (isChecked !== '') {
-      setChecked('checked');
+  const handleClick = ({ target }) => {
+    const { value, checked } = target;
+    if (checked) {
+      setChecked((p) => [...p, value]);
     } else {
-      setChecked('');
+      setChecked(checkedIngredients.filter((item) => item !== value));
     }
   };
 
@@ -65,11 +66,18 @@ function EmProgressoComidas() {
             ingredients.map((item, i) => (
               <label
                 htmlFor="ingredients"
-                data-testeid={ `${i}-ingerdient-step` }
+                data-testid={ `${i}-ingredient-step` }
                 key={ item }
+                className={ checkedIngredients
+                  .some((checkedItem) => checkedItem === item) ? 'checked' : '' }
               >
-                <input type="checkbox" onClick={ handleClick } />
-                <p className={ isChecked }>{ item }</p>
+                <input
+                  id="ingrediends"
+                  value={ item }
+                  type="checkbox"
+                  onClick={ (event) => handleClick(event) }
+                />
+                { item }
               </label>))
           }
         </div>
