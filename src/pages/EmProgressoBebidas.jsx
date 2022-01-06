@@ -6,7 +6,7 @@ import '../css/EmProgresso.css';
 function EmProgressoBebidas() {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
-  const getProgressInitial = JSON.parse(localStorage.getItem('inProgessRecipes'));
+  const getProgressInitial = JSON.parse(localStorage.getItem('inProgressRecipes'));
   const initialIngredients = getProgressInitial ? getProgressInitial.cocktails[idReceita] : [];
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
@@ -25,7 +25,7 @@ function EmProgressoBebidas() {
   }, [idReceita]);
 
   useEffect(() => {
-    const getProgress = JSON.parse(localStorage.getItem('inProgessRecipes'));
+    const getProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
     if (getProgress) {
       getProgress.cocktails[idReceita] = checkedIngredients;
       localStorage.setItem('inProgressRecipes', JSON.stringify(getProgress));
