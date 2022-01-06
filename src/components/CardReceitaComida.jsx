@@ -5,7 +5,7 @@ function CardReceitaComida({ meal: { strMeal, strMealThumb, idMeal }, index, his
   return (
     <div
       data-testid={ `${index}-recipe-card` }
-      onClick={ () => history.push(`/comidas/${idMeal}`) }
+      onClick={ () => history.push({ pathname: `/comidas/${idMeal}` }) }
       onKeyDown={ () => {} }
       role="button"
       aria-hidden="true" // Solução encontrada no link: https://stackoverflow.com/questions/54274473/how-to-fix-static-html-elements-with-event-handlers-require-a-role

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Header from '../components/Header';
 import { getCocktailsDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardMeal';
 import 'swiper/swiper.min.css';
+import blackHeartIcon from '../images/blackHeartIcon.svg';
+import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 
-function DetalhesBebidas({ history }) {
+function DetalhesBebidas() {
+  const history = useHistory();
+  const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
 
@@ -16,6 +19,10 @@ function DetalhesBebidas({ history }) {
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [isFav, setFav] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
@@ -32,7 +39,7 @@ function DetalhesBebidas({ history }) {
       setMeasures(recipeMeasures);
       setRecipe(data.drinks);
     });
-  }, []);
+  }, [idReceita]);
 
   useEffect(() => {
     const defineURL = requestAPI('Comidas', '', 'name');
@@ -50,17 +57,78 @@ function DetalhesBebidas({ history }) {
 
     };
   }, []);
+  
+  useEffect(() => {
+    const getStoragedDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    const getStoragedinProgressRecipes = JSON
+      .parse(localStorage.getItem('inProgressRecipes'));
 
-  const handleClick = () => {
-    history.push(`/bebidas/${idReceita}/in-progress`);
+    const getStoragedFavRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+
+    if (getStoragedFavRecipes) {
+      setFav(getStoragedFavRecipes.some((r) => r.id === idReceita));
+    }
+
+    if (getStoragedinProgressRecipes) {
+      setInProgress((getStoragedinProgressRecipes.cocktails[idReceita]));
+    }
+    if (getStoragedDoneRecipes) {
+      setIsDone(getStoragedDoneRecipes.some((r) => r.id === idReceita));
+    }
+  }, [idReceita]);
+
+  const handleFavButtonClick = () => {
+    const {
+      idDrink: id,
+      strAlcoholic: alcoholicOrNot,
+      strCategory: category,
+      strDrink,
+      strDrinkThumb: image,
+    } = recipe[0];
+
+    const recipeToStorage = {
+      id,
+      type: 'bebida',
+      area: '',
+      category,
+      alcoholicOrNot,
+      name: strDrink,
+      image,
+    };
+
+    setFav((p) => !p);
+
+    const getFav = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    const handleFav = getFav ? [...getFav, recipeToStorage] : [recipeToStorage];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(handleFav));
   };
 
   const renderRecipe = () => (
-    <div>
+    <div style={ { position: 'relative' } }>
       <img alt="recipies" src={ recipe[0].strDrinkThumb } data-testid="recipe-photo" />
       <h2 data-testid="recipe-title">{ recipe[0].strDrink }</h2>
-      <button type="button" data-testid="share-btn">Compartilhar</button>
-      <button type="button" data-testid="favorite-btn">Favoritar</button>
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ () => {
+          setLinkCopied(true);
+          navigator.clipboard.writeText(`http://localhost:3000${pathname}`);
+        } }
+      >
+        Compartilhar
+      </button>
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        src={ isFav ? blackHeartIcon : whiteHeartIcon }
+        onClick={ handleFavButtonClick }
+      >
+        <img
+          src={ isFav ? blackHeartIcon : whiteHeartIcon }
+          alt={ `${isFav ? 'black' : 'white'} heart icon` }
+        />
+        Favoritar
+      </button>
       <span data-testid="recipe-category">{ recipe[0].strAlcoholic }</span>
       <ul>
         {
@@ -94,13 +162,23 @@ function DetalhesBebidas({ history }) {
           </Swiper>
         )
       }
-      <button
-        data-testid="start-recipe-btn"
-        type="button"
-        onClick={ () => handleClick() }
-      >
-        Iniciar
-      </button>
+      {
+        !isDone && (
+          <button
+            data-testid="start-recipe-btn"
+            type="button"
+            onClick={ () => history.push(`/bebidas/${idReceita}/in-progress`) }
+            style={ { position: 'fixed', bottom: '0' } }
+          >
+            { inProgress ? 'Continuar' : 'Iniciar'}
+            {' '}
+            Receita
+          </button>
+        )
+      }
+      {
+        linkCopied && <p>Link copiado!</p>
+      }
     </div>
   );
 
@@ -111,9 +189,5 @@ function DetalhesBebidas({ history }) {
     </div>
   );
 }
-
-DetalhesBebidas.propTypes = {
-  history: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
 
 export default DetalhesBebidas;
