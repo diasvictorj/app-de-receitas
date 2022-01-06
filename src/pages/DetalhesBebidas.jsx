@@ -57,7 +57,7 @@ function DetalhesBebidas() {
 
     };
   }, []);
-  
+
   useEffect(() => {
     const getStoragedDoneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
     const getStoragedinProgressRecipes = JSON
