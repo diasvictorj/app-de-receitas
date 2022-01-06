@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getMealDetails } from '../services/requestDetails';
+import '../css/EmProgresso.css';
 
 function EmProgressoComidas() {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
+  const [isChecked, setChecked] = useState('');
 
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
@@ -19,6 +21,14 @@ function EmProgressoComidas() {
       setRecipe(data.meals);
     });
   }, []);
+
+  const handleClick = () => {
+    if (isChecked !== '') {
+      setChecked('checked');
+    } else {
+      setChecked('');
+    }
+  };
 
   if (!recipe) {
     return (<h1>Loading</h1>); /* Fazer componente Loading */
@@ -51,11 +61,17 @@ function EmProgressoComidas() {
       </section>
       <section>
         <div id="ingredient-list">
-          {ingredients.map((item, i) => (
-            <p data-testid={ `:${i}-ingredient-step` } key={ item }>
-              {item}
-            </p>
-          ))}
+          {
+            ingredients.map((item, i) => (
+              <label
+                htmlFor="ingredients"
+                data-testeid={ `${i}-ingerdient-step` }
+                key={ item }
+              >
+                <input type="checkbox" onClick={ handleClick } />
+                <p className={ isChecked }>{ item }</p>
+              </label>))
+          }
         </div>
         <div>
           <p data-testid="instructions">{ strInstructions }</p>

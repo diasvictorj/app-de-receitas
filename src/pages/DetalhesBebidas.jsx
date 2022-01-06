@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -52,11 +52,6 @@ function DetalhesBebidas({ history }) {
   }, []);
 
   const handleClick = () => {
-    const inProgressRecipe = {
-      recipe,
-      ingredients,
-    };
-    setInProgress(inProgressRecipe);
     history.push(`/bebidas/${idReceita}/in-progress`);
   };
 

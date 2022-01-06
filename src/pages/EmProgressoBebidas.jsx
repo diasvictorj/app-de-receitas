@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getCocktailsDetails } from '../services/requestDetails';
-
+import '../css/EmProgresso.css';
 
 function EmProgressoBebidas() {
   const params = useParams();
   const { id_da_receita: idReceita } = params;
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
+  const [isChecked, setChecked] = useState('');
 
   useEffect(() => {
     getCocktailsDetails(idReceita).then((data) => {
@@ -16,12 +17,18 @@ function EmProgressoBebidas() {
         .filter((key) => key.includes('strIngredient') && data.drinks[0][key])
         .map((i) => data.drinks[0][i]);
 
-
       setIngredients(recipeIngredients);
-  
       setRecipe(data.drinks);
     });
   }, []);
+
+  const handleClick = () => {
+    if (isChecked !== '') {
+      setChecked('checked');
+    } else {
+      setChecked('');
+    }
+  };
 
   if (!recipe) {
     return (<h1>Loading</h1>); /* Fazer componente Loading */
@@ -58,7 +65,14 @@ function EmProgressoBebidas() {
         <div id="ingredient-list">
           {
             ingredients.map((item, i) => (
-              <p data-testid={ `:${i}-ingredient-step` } key={ item }>{ item }</p>))
+              <label
+                htmlFor="ingredients"
+                data-testeid={ `${i}-ingerdient-step` }
+                key={ item }
+              >
+                <input type="checkbox" onClick={ handleClick } />
+                <p className={ isChecked }>{ item }</p>
+              </label>))
           }
         </div>
         <div>

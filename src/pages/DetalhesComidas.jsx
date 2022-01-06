@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
@@ -8,7 +8,6 @@ import { getMealDetails } from '../services/requestDetails';
 import requestAPI from '../services/requestAPI';
 import RecomendationCard from '../components/RecomendationCardDrink';
 import 'swiper/swiper.min.css';
-import MyContext from '../context/Mycontext';
 
 function DetalhesComidas({ history }) {
   const params = useParams();
@@ -18,7 +17,6 @@ function DetalhesComidas({ history }) {
   const [measures, setMeasures] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
 
-  const { setInProgress } = useContext(MyContext);
   useEffect(() => {
     getMealDetails(idReceita).then((data) => {
       const recipeKeys = Object.keys(data.meals[0]);
@@ -54,11 +52,6 @@ function DetalhesComidas({ history }) {
   }, []);
 
   const handleClick = () => {
-    const inProgressRecipe = {
-      recipe,
-      ingredients,
-    };
-    setInProgress(inProgressRecipe);
     history.push(`/comidas/${idReceita}/in-progress`);
   };
 
