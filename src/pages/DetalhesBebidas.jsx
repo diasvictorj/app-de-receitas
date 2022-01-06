@@ -14,6 +14,7 @@ function DetalhesBebidas() {
   const { pathname } = history.location;
   const params = useParams();
   const { id_da_receita: idReceita } = params;
+
   const [recipe, setRecipe] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [measures, setMeasures] = useState([]);
@@ -180,6 +181,7 @@ function DetalhesBebidas() {
       }
     </div>
   );
+
   return (
     <div>
       <Header name="Detalhes Bebidas" />

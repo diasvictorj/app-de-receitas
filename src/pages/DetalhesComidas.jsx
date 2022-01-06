@@ -189,4 +189,5 @@ function DetalhesComidas() {
     </div>
   );
 }
+
 export default DetalhesComidas;
