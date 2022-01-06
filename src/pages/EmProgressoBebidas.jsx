@@ -26,7 +26,7 @@ function EmProgressoBebidas() {
   }, [idReceita]);
 
   useEffect(() => {
-    const getProgress = JSON.parse(localStorage.getItem('inProgessRecipes'));
+    const getProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
     if (getProgress) {
       getProgress.cocktails[idReceita] = checkedIngredients;
       localStorage.setItem('inProgressRecipes', JSON.stringify(getProgress));
