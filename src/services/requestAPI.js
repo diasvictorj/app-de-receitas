@@ -15,6 +15,8 @@ const filterCheck = (radioValue, searchValue) => {
 
   case ('categories'):
     return 'list.php?c=list';
+  case ('area'):
+    return `filter.php?a=${searchValue}`;
 
   default:
     return null;
