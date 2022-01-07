@@ -6,6 +6,7 @@ function Provider({ children }) {
   const [meals, setMeals] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [ingredientFilter, setIngredientFilter] = useState('');
 
   const contextValue = {
     meals,
@@ -14,6 +15,8 @@ function Provider({ children }) {
     setDrinks,
     redirect,
     setRedirect,
+    ingredientFilter,
+    setIngredientFilter,
 
   };
   return (

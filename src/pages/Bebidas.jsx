@@ -8,7 +8,8 @@ import CardReceitaBebida from '../components/CardReceitaBebida';
 import requestAPI from '../services/requestAPI';
 
 function Bebidas({ history }) {
-  const { drinks, setDrinks, redirect, setRedirect } = useContext(MyContext);
+  const { drinks, setDrinks, redirect, setRedirect,
+    ingredientFilter, setIngredientFilter } = useContext(MyContext);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(undefined);
 
@@ -27,11 +28,14 @@ function Bebidas({ history }) {
     ));
 
   useEffect(() => {
-    const defineURL = requestAPI('Bebidas', '', 'name');
+    setDrinks([]);
+    const defineURL = ingredientFilter === '' ? requestAPI('Bebidas', '', 'name')
+      : requestAPI('Bebidas', ingredientFilter, 'ingredient');
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setDrinks(e.drinks))
       .catch((error) => console.log('Deu ruim', error));
+    setIngredientFilter('');
   }, [setDrinks]);
 
   useEffect(() => {
