@@ -5,6 +5,40 @@ import IngredientsList from '../components/IngredientsList';
 import '../css/EmProgresso.css';
 import { getMealDetails } from '../services/requestDetails';
 
+function handleFinishBtnClick(recipe, history) {
+  const getDone = JSON.parse(localStorage.getItem('doneRecipes'));
+  const {
+    idMeal: id,
+    strCategory: category,
+    strArea: area,
+    strMeal,
+    strMealThumb: image,
+    strTags: tags,
+  } = recipe[0];
+
+  const doneDate = new Date();
+
+  const newRecipe = {
+    id,
+    type: 'comida',
+    category,
+    area,
+    alcoholicOrNot: '',
+    name: strMeal,
+    image,
+    doneDate,
+    tags,
+  };
+
+  if (getDone) {
+    localStorage.setItem('doneRecipes', JSON.stringify([...getDone, newRecipe]));
+  } else {
+    localStorage.setItem('doneRecipes', JSON.stringify([newRecipe]));
+  }
+
+  history.push('/receitas-feitas');
+}
+
 function EmProgressoComidas() {
   const history = useHistory();
   const params = useParams();
@@ -48,7 +82,7 @@ function EmProgressoComidas() {
     if (getStoragedFavRecipes) {
       setFav(getStoragedFavRecipes.some((r) => r.id === idReceita));
     }
-  }, []);
+  }, [idReceita]);
 
   const handleFavButtonClick = () => {
     const {
@@ -87,7 +121,7 @@ function EmProgressoComidas() {
 
   useEffect(() => {
     setDisabled(checkedIngredients.length !== ingredients.length);
-  }, [checkedIngredients]);
+  }, [checkedIngredients, ingredients]);
 
   if (!recipe) {
     return (<h1>Loading</h1>); /* Fazer componente Loading */
@@ -135,7 +169,7 @@ function EmProgressoComidas() {
         <button
           data-testid="finish-recipe-btn"
           type="button"
-          onClick={ () => history.push('/receitas-feitas') }
+          onClick={ () => handleFinishBtnClick(recipe, history) }
           disabled={ disabled }
         >
           Finalizar Receita
