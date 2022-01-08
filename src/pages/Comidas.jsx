@@ -9,7 +9,8 @@ import CardReceitaComida from '../components/CardReceitaComida';
 import requestAPI from '../services/requestAPI';
 
 function Comidas({ history }) {
-  const { meals, setMeals, redirect, setRedirect } = useContext(MyContext);
+  const { meals, setMeals, redirect, setRedirect,
+    ingredientFilter, setIngredientFilter } = useContext(MyContext);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(undefined);
   const message = ('Sinto muito, não encontramos nenhuma receita para esses filtros.');
@@ -17,11 +18,14 @@ function Comidas({ history }) {
   const maxCategoriesLength = 5;
 
   useEffect(() => {
-    const defineURL = requestAPI('Comidas', '', 'name');
+    setMeals([]);
+    const defineURL = ingredientFilter === '' ? requestAPI('Comidas', '', 'name')
+      : requestAPI('Comidas', ingredientFilter, 'ingredient');
     fetch(defineURL)
       .then((response) => response.json())
       .then((e) => setMeals(e.meals))
       .catch((error) => console.log('Deu ruim', error));
+    setIngredientFilter('');
   }, [setMeals]);
 
   useEffect(() => {
