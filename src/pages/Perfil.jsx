@@ -4,7 +4,8 @@ import Header from '../components/Header';
 import MenuInferior from '../components/MenuInferior';
 
 function Perfil({ history }) {
-  const email = JSON.parse(localStorage.getItem('email'));
+  const {email} = JSON.parse(localStorage.getItem('user'));
+  console.log(email);
 
 
   const receitasFeitasBTN = (<button 
