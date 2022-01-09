@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 function Login({ history }) {
-  const [email, setEmail] = useState('');
+  const [ email, setEmail ] = useState('');
   const [password, setPassword] = useState('');
 
   function habilitaButton() {
@@ -31,7 +31,7 @@ function Login({ history }) {
           type="email"
           value={ email }
           data-testid="email-input"
-          onChange={ ({ target }) => setEmail(target.value) }
+          onChange={ ({target}) =>  setEmail(target.value) }
         />
       </label>
 

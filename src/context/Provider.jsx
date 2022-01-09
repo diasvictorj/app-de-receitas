@@ -17,7 +17,6 @@ function Provider({ children }) {
     setRedirect,
     ingredientFilter,
     setIngredientFilter,
-
   };
   return (
     <context.Provider value={ contextValue }>
