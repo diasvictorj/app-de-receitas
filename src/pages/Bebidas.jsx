@@ -36,7 +36,7 @@ function Bebidas({ history }) {
       .then((e) => setDrinks(e.drinks))
       .catch((error) => console.log('Deu ruim', error));
     setIngredientFilter('');
-  }, [setDrinks]);
+  }, [setDrinks, setIngredientFilter]);
 
   useEffect(() => {
     const defineURL = requestAPI('Bebidas', '', 'categories');

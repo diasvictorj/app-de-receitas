@@ -26,7 +26,7 @@ function Comidas({ history }) {
       .then((e) => setMeals(e.meals))
       .catch((error) => console.log('Deu ruim', error));
     setIngredientFilter('');
-  }, [setMeals]);
+  }, [setMeals, setIngredientFilter]);
 
   useEffect(() => {
     const defineURL = requestAPI('Comidas', '', 'categories');
