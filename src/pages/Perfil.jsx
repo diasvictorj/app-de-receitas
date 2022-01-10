@@ -1,54 +1,49 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import Header from '../components/Header';
 import MenuInferior from '../components/MenuInferior';
-import { useHistory } from 'react-router-dom';
-
 
 function Perfil() {
-  const { email } = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
   const history = useHistory();
 
   function logOut() {
     localStorage.clear();
-    history.push("/");
+    history.push('/');
   }
 
   return (
     <div>
-      <Header name='Perfil' hideSearch />
-      <h3 data-testid='profile-email'>{email}</h3>
+      <Header name="Perfil" hideSearch />
+      <h3 data-testid="profile-email">{ user && user.email}</h3>
 
       <button
-        type='button'
+        type="button"
         data-testid="profile-done-btn"
-        onClick={() => history.push('/receitas-feitas')}
+        onClick={ () => history.push('/receitas-feitas') }
       >
         Receitas Feitas
       </button>
 
       <button
-        type='button'
+        type="button"
         data-testid="profile-favorite-btn"
-        onClick={ () => history.push('/receitas-favoritas')}
+        onClick={ () => history.push('/receitas-favoritas') }
       >
         Receitas Favoritas
       </button>
 
       <button
-        type='button'
+        type="button"
         data-testid="profile-logout-btn"
-        onClick={() => logOut()}
+        onClick={ () => logOut() }
       >
         Sair
       </button>
 
-      <MenuInferior history={history} />
+      <MenuInferior history={ history } />
     </div>
   );
 }
-Perfil.propTypes = {
-  history: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
 
 export default Perfil;

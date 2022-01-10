@@ -13,7 +13,7 @@ function handleFinishBtnClick(recipe, history) {
     strArea: area,
     strMeal,
     strMealThumb: image,
-    strTags: tags,
+    strTags: [...tags],
   } = recipe[0];
 
   const doneDate = new Date();
